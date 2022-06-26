@@ -1,0 +1,110 @@
+[
+    {
+        "config": "map_bert_5e-05_64_4_list.csv",
+        "map": 0.3800918196715981
+    },
+    {
+        "config": "map_bert_3e-05_64_2_list.csv",
+        "map": 0.4297845358199249
+    },
+    {
+        "config": "map_bert_2e-05_16_2_list.csv",
+        "map": 0.41958934795997394
+    },
+    {
+        "config": "map_bert_2e-05_16_4_list.csv",
+        "map": 0.36862894826024367
+    },
+    {
+        "config": "map_bert_5e-05_32_4_list.csv",
+        "map": 0.37745111133259335
+    },
+    {
+        "config": "map_bert_5e-05_64_2_list.csv",
+        "map": 0.41509708045667165
+    },
+    {
+        "config": "map_bert_5e-05_32_3_list.csv",
+        "map": 0.3874332082064441
+    },
+    {
+        "config": "map_bert_3e-05_64_4_list.csv",
+        "map": 0.3926921151558549
+    },
+    {
+        "config": "map_bert_5e-05_32_2_list.csv",
+        "map": 0.41623380082403794
+    },
+    {
+        "config": "map_bert_2e-05_32_4_list.csv",
+        "map": 0.40506508947602266
+    },
+    {
+        "config": "map_bert_5e-05_16_4_list.csv",
+        "map": 0.2611615371957876
+    },
+    {
+        "config": "map_bert_2e-05_32_2_list.csv",
+        "map": 0.43292698130675655
+    },
+    {
+        "config": "map_bert_3e-05_16_3_list.csv",
+        "map": 0.40643039336178505
+    },
+    {
+        "config": "map_bert_2e-05_64_2_list.csv",
+        "map": 0.43937338600213655
+    },
+    {
+        "config": "map_bert_5e-05_16_3_list.csv",
+        "map": 0.17886515318828097
+    },
+    {
+        "config": "map_bert_3e-05_16_4_list.csv",
+        "map": 0.36734451721468614
+    },
+    {
+        "config": "map_bert_2e-05_64_4_list.csv",
+        "map": 0.4095965272806849
+    },
+    {
+        "config": "map_bert_2e-05_32_3_list.csv",
+        "map": 0.41656004329951024
+    },
+    {
+        "config": "map_bert_3e-05_32_2_list.csv",
+        "map": 0.4227406745194187
+    },
+    {
+        "config": "map_bert_5e-05_16_2_list.csv",
+        "map": 0.1295497027442391
+    },
+    {
+        "config": "map_bert_5e-05_64_3_list.csv",
+        "map": 0.35268944952857395
+    },
+    {
+        "config": "map_bert_2e-05_16_3_list.csv",
+        "map": 0.411879235228166
+    },
+    {
+        "config": "map_bert_3e-05_32_3_list.csv",
+        "map": 0.39466107048700727
+    },
+    {
+        "config": "map_bert_3e-05_16_2_list.csv",
+        "map": 0.40363198260668975
+    },
+    {
+        "config": "map_bert_3e-05_64_3_list.csv",
+        "map": 0.41884193305765277
+    },
+    {
+        "config": "map_bert_3e-05_32_4_list.csv",
+        "map": 0.38734572143531676
+    },
+    {
+        "config": "map_bert_2e-05_64_3_list.csv",
+        "map": 0.43937338600213655
+    }
+]
