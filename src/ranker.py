@@ -12,7 +12,7 @@ import pickle
 import torch
 
 # For debugging
-os.environ["CUDA_VISIBLE_DEVICES"]="7"
+# os.environ["CUDA_VISIBLE_DEVICES"]="7"
 
 os.makedirs("log_folder", exist_ok=True)
 logger = logging.getLogger()
@@ -45,7 +45,6 @@ def init_args():
     parser.add_argument('--max_length', type=int, default=256)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=3)
-    parser.add_argument('--device', type=str, default='cuda')
     
     parser.add_argument('--top_bm25', type=int, default=100)
     parser.add_argument('--map_cut', type=int, default=100)
@@ -79,7 +78,7 @@ if __name__ == "__main__":
     logger.info("EPOCHS: {}".format(args.epochs))
     logger.info("============================================")
 
-    device = args.device if torch.cuda.is_available() else 'cpu'
+    device = utils.get_gpu_device(logger)
     if not os.path.exists('../outputs_folder'):
         os.makedirs('../outputs_folder')
 
