@@ -68,12 +68,12 @@ def interpolated_11_point(retrieved, golds):
         # If there are recalls above r
         if argGreaterRecalls.size != 0:
             pmax = max(precision_score[argGreaterRecalls.min():])
-        print(r, pmax, argGreaterRecalls)
+        # print(r, pmax, argGreaterRecalls)
         recallValid.append(r)
         rhoInterp.append(pmax)
         
     ap = sum(rhoInterp) / 11        
-    return ap, 
+    return ap
 
 
 def dcg(retrieved, k):
