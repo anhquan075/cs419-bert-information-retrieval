@@ -1,5 +1,5 @@
-# BERT meets Cranfield
-Recently, pre-trained BERT-based rankers achieved outstanding results on well-known collections. We investigate BERT-based rankers performance on the Cranfield collection, which comes with full relevance judgment on all documents in the collection. 
+# Information Retrieval using BERT-rankers 
+We investigate BERT-based rankers performance on the Cranfield collection, which comes with full relevance judgment on all documents in the collection. The codebase based on [Bert-meets-Cranfiled](https://gitlab.science.ru.nl/nghasemi/bert-meets-cranfield) repo
 # Requirements
 Make sure to install all the neccessary packages using the following command:
 ```bash
