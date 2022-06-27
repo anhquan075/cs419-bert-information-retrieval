@@ -5,6 +5,21 @@ Make sure to install all the neccessary packages using the following command:
 ```bash
 pip install -r requirements.txt
 ```
+## IMPORTANT NOTES:
+You must have a GPU to run this code. The spec of ours is Tesla P40 with 22GB VRAM.
+
+Before you train or inference, make sure that you divide the data into k-fold. You can use the script `generate_fold.py` in `src` folder, unless you cannot run the code:
+```bash
+cd src/
+python3 generate_fold.py <path-of-the-queries-file> <fold-data-output-folder>
+```
+### Example: ###
+```bash
+cd src/
+python3 generate_fold.py ../data/cran/cran_qry.json ../data/folds_output/
+```
+You can also find the folds we used in this folder under `./data/folds`.
+
 
 # Data Preparation
 Cranfield collection was downloaded from [here](http://ir.dcs.gla.ac.uk/resources/test_collections/cran/).
@@ -53,18 +68,7 @@ We converted the data into `json` format. You can find the sample for the querie
     {
         ...
 ```
-## IMPORTANT NOTES:
-Before you train or inference, make sure that you divide the data into k-fold. You can use the script `generate_fold.py` in `src` folder, unless you cannot run the code:
-```bash
-cd src/
-python3 generate_fold.py <path-of-the-queries-file> <fold-data-output-folder>
-```
-### Example: ###
-```bash
-cd src/
-python3 generate_fold.py ../data/cran/cran_qry.json ../data/folds_output/
-```
-You can also find the folds we used in this folder under `./data/folds`.
+
 
 # Getting Started
 You can set Hyper-parameters in the `init_args` function of `ranker.py` file. 

@@ -348,7 +348,7 @@ def testing(model, test_dataloader, device, test_index, mrr_bert_list, ap_11_int
     logger.info("Test MAP:  " + "{:.4f}".format(map_total / len(test_index)))
     logger.info("Test NDCG: " + "{:.4f}".format(ndcg_total / len(test_index)))
     logger.info(len(map_bert_list))
-    return mrr_bert, map_bert, ndcg_bert, mrr_bert_list, map_bert_list, ndcg_bert_list
+    return mrr_bert, ap_11_interpolated_bert, map_bert, ndcg_bert, mrr_bert_list, ap_11_interpolated_list, map_bert_list, ndcg_bert_list
 
 
 def t_test(bm25_list, bert_list, measure, logger):

@@ -172,11 +172,13 @@ if __name__ == "__main__":
                                                                                                     args.map_cut, args.ndcg_cut, logger,
                                                                                                     len(corpus))
 
-    logger.info("BERT MRR:  " + "{:.4f}".format(mrr_bert / 5))
-    logger.info("BERT MAP:  " + "{:.4f}".format(map_bert / 5))
-    logger.info("BERT NDCG: " + "{:.4f}".format(ndcg_bert / 5))
+    logger.info("Final result of BERT MRR:  " + "{:.4f}".format(mrr_bert / 5))
+    logger.info("Final result of BERT 11-points interpolted precision:  " + "{:.4f}".format(ap_11_interpolated_bert / 5))
+    logger.info("Final result of BERT MAP:  " + "{:.4f}".format(map_bert / 5))
+    logger.info("Final result of BERT NDCG: " + "{:.4f}".format(ndcg_bert / 5))
 
     os.makedirs("./results_256_token/{}".format(datetime_res), exist_ok=True)
     utils.results_to_csv('./results_256_token/{}/mrr_bert_{}_{}_{}_list.csv'.format(datetime_res, args.learning_rate, args.batch_size, args.epochs), mrr_bert_list)
+    utils.results_to_csv('./results_256_token/{}/ap_11_points_bert_{}_{}_{}_list.csv'.format(datetime_res, args.learning_rate, args.batch_size, args.epochs), ap_11_interpolated_list)
     utils.results_to_csv('./results_256_token/{}/map_bert_{}_{}_{}_list.csv'.format(datetime_res, args.learning_rate, args.batch_size, args.epochs), map_bert_list)
     utils.results_to_csv('./results_256_token/{}/ndcg_bert_{}_{}_{}_list.csv'.format(datetime_res, args.learning_rate, args.batch_size, args.epochs), ndcg_bert_list)
