@@ -10,13 +10,13 @@ from torch.utils.data import TensorDataset
 def get_queries(location):
     with open(location, 'r') as query_file:
         all_queries = json.load(query_file)
-        return [q['query'].replace('\n', ' ').replace('.', '') for q in all_queries]
+        return [q['query'].replace('\n', ' ').replace('.', '').lower() for q in all_queries]
 
 
 def get_corpus(location):
     with open(location, 'r') as document_file:
         all_sentences = json.load(document_file)
-        return [s['sentences'].replace('\n', ' ').replace('.', '') for s in all_sentences]
+        return [s['sentences'].replace('\n', ' ').replace('.', '').lower() for s in all_sentences]
 
 
 def get_judgments(location):
@@ -26,8 +26,8 @@ def get_judgments(location):
 
 
 def load_fold(fold_number):
-    train_index = np.load('/vinai/quannla/bert-meets-cranfield/Data/folds/train_index_fold' + str(fold_number) + '.npy')
-    test_index = np.load('/vinai/quannla/bert-meets-cranfield/Data/folds/test_index_fold' + str(fold_number) + '.npy')
+    train_index = np.load('/vinai/quannla/bert-meets-cranfield/data/folds/train_index_fold' + str(fold_number) + '.npy')
+    test_index = np.load('/vinai/quannla/bert-meets-cranfield/data/folds/test_index_fold' + str(fold_number) + '.npy')
     return train_index, test_index
 
 

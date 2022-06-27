@@ -49,6 +49,32 @@ def average_precision(retrieved, golds):
         return 0.
     return np.sum(out[:golds]) / golds
 
+# [1, 1,0,1,0,0,0,0...]
+
+def interpolated_11_point(retrieved, golds):
+    retrieved = np.asarray(retrieved) != 0
+    recall_score = [k/golds for k in range(1, len(np.argwhere(retrieved != 0)) + 1)]
+    precision_score = [precision_at_k(retrieved, k + 1) for k in range(retrieved.size) if retrieved[k]]
+    
+    interplolated_values = np.linspace(0, 1, 11)
+    interplolated_values = list(interplolated_values[::-1])
+    rhoInterp = []
+    recallValid = []
+    # For each recallValues (0, 0.1, 0.2, ... , 1)
+    for r in interplolated_values:
+        # Obtain all recall values higher or equal than r
+        argGreaterRecalls = np.argwhere(recall_score[:] >= r)
+        pmax = 0
+        # If there are recalls above r
+        if argGreaterRecalls.size != 0:
+            pmax = max(precision_score[argGreaterRecalls.min():])
+        print(r, pmax, argGreaterRecalls)
+        recallValid.append(r)
+        rhoInterp.append(pmax)
+        
+    ap = sum(rhoInterp) / 11        
+    return ap, rhoInterp
+
 
 def dcg(retrieved, k):
     retrieved = np.asfarray(retrieved)[:k]
@@ -72,11 +98,11 @@ def retrieve_gold(rel_fed, query_num):
     return gold, gold_unsorted, gold_sorted_score
 
 
-def get_binary_labels(rel_fed):
+def get_binary_labels(rel_fed, length_of_queries_lst, length_of_corpus_lst):
     labels = []
-    for query_num in range(0, 225):
+    for query_num in range(0, length_of_queries_lst):
         gold, gold_unsorted, gold_sorted_score = retrieve_gold(rel_fed, query_num)
-        current_labels = np.zeros(1401)
+        current_labels = np.zeros(length_of_corpus_lst + 1)
         current_labels[list(gold_unsorted)] = 1
         current_labels = current_labels[1:]
         labels.append(current_labels)
@@ -88,9 +114,9 @@ def get_bm25_top_results(tokenized_corpus, tokenized_queries, n):
     bm25_top_n = []
     query_num = 0
 
-    for query in tokenized_queries:
+    for query in tqdm(tokenized_queries, desc='Get BM25 results'):
         doc_scores = bm25.get_scores(query)
-        feedback = list(zip(doc_scores, range(0, 1400)))
+        feedback = list(zip(doc_scores, range(0, len(tokenized_corpus))))
         feedback_sorted = sorted(feedback, reverse=True)
         bm25_top_n.append(list(zip(*feedback_sorted))[1][:n])
         query_num += 1
@@ -99,11 +125,11 @@ def get_bm25_top_results(tokenized_corpus, tokenized_queries, n):
 
 def bert_tokenizer(corpus, queries, max_length, model_type):
     padded, attention_mask, token_type_ids = [], [], []
-    tokenizer = AutoTokenizer.from_pretrained(model_type, do_lower_case=True, cache_dir=f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/cache/{model_type}', local_files_only=True)
-    tokenizer.save_pretrained(f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/{model_type}')
+    tokenizer = AutoTokenizer.from_pretrained(model_type, do_lower_case=True,) #cache_dir=f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/cache/{model_type}', local_files_only=True)
+    #tokenizer.save_pretrained(f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/{model_type}')
     temp_feedback = []
 
-    for query_num in tqdm(range(0, 225)):
+    for query_num in tqdm(range(0, len(queries))):
         temp_corpus = corpus
 
         current_padded, current_attention_mask, current_token_type_ids = [], [], []
@@ -125,18 +151,18 @@ def bert_tokenizer(corpus, queries, max_length, model_type):
     return padded, attention_mask, token_type_ids, temp_feedback
 
 
-def mrr_map_ndcg(trec_fold, current_query, query_num, feedback, rel_fed, mrr_total, map_total, ndcg_total, mrr_list,
+def mrr_ap_11_map_ndcg(trec_fold, current_query, query_num, feedback, rel_fed, mrr_total, ap_11_total, map_total, ndcg_total, mrr_list, ap_11_list,
                  map_list, ndcg_list, mode, fold_number, map_cut, ndcg_cut):
     feedback_sorted = sorted(feedback, reverse=True)
 
     walker = 1
-    for fs in feedback_sorted:
+    for fs in tqdm(feedback_sorted):
         current_fold = current_query
         current_fold += "D" + str(fs[1] + 1) + "\t" + str(walker) + "\t" + str(fs[0]) + "\t" + "run" + "\n"
         trec_fold += current_fold
         walker += 1
 
-    text_file = open("/vinai/quannla/bert-meets-cranfield/outputs_folder/result-" + mode + "-" + "Fold" + str(fold_number), "w")
+    text_file = open("../outputs_folder/result-" + mode + "-" + "Fold" + str(fold_number), "w")
     text_file.write(trec_fold)
     text_file.close()
 
@@ -150,6 +176,10 @@ def mrr_map_ndcg(trec_fold, current_query, query_num, feedback, rel_fed, mrr_tot
     mrr_list.append(mrr_current)
     mrr_total += mrr_current
 
+    ap_11_interpolated_current = interpolated_11_point(selected_candidates[:map_cut], len(gold_unsorted))
+    ap_11_list.append(ap_11_interpolated_current)
+    ap_11_total += ap_11_interpolated_current
+
     map_current = average_precision(selected_candidates[:map_cut], len(gold_unsorted))
     map_list.append(map_current)
     map_total += map_current
@@ -158,41 +188,7 @@ def mrr_map_ndcg(trec_fold, current_query, query_num, feedback, rel_fed, mrr_tot
     ndcg_list.append(ndcg_current)
     ndcg_total += ndcg_current
 
-    return mrr_total, map_total, ndcg_total, mrr_list, map_list, ndcg_list, trec_fold
-
-
-def get_bm25_results(mrr_bm25_list, map_bm25_list, ndcg_bm25_list, test_index, tokenized_queries, bm25, mrr_bm25,
-                     map_bm25, ndcg_bm25, rel_fed, fold_number, map_cut, ndcg_cut, logger):
-    mrr_total, map_total, ndcg_total = 0, 0, 0
-    mrr_list, map_list, ndcg_list = [], [], []
-    trec_fold = ""
-    for query_index in test_index:
-        current_query = "Q" + str(query_index + 1) + "\t" + "Q0" + "\t"
-        query = tokenized_queries[query_index]
-        doc_scores = bm25.get_scores(query)
-        feedback = list(zip(doc_scores, range(0, 1400)))
-        mrr_total, map_total, ndcg_total, mrr_list, map_list, ndcg_list, trec_fold = mrr_map_ndcg(trec_fold,
-                                                                                                  current_query,
-                                                                                                  query_index, feedback,
-                                                                                                  rel_fed, mrr_total,
-                                                                                                  map_total, ndcg_total,
-                                                                                                  mrr_list, map_list,
-                                                                                                  ndcg_list, 'BM25',
-                                                                                                  fold_number,
-                                                                                                  map_cut, ndcg_cut)
-
-    mrr_bm25_list += list(zip(mrr_list, test_index))
-    map_bm25_list += list(zip(map_list, test_index))
-    ndcg_bm25_list += list(zip(ndcg_list, test_index))
-
-    mrr_bm25 += mrr_total / len(test_index)
-    map_bm25 += map_total / len(test_index)
-    ndcg_bm25 += ndcg_total / len(test_index)
-    logger.info("MRR:  " + "{:.4f}".format(mrr_total / len(test_index)))
-    logger.info("MAP:  " + "{:.4f}".format(map_total / len(test_index)))
-    logger.info("NDCG: " + "{:.4f}".format(ndcg_total / len(test_index)))
-    logger.info(len(map_bm25_list))
-    return mrr_bm25, map_bm25, ndcg_bm25, mrr_bm25_list, map_bm25_list, ndcg_bm25_list
+    return mrr_total, ap_11_total, map_total, ndcg_total, mrr_list, ap_11_list, map_list, ndcg_list, trec_fold
 
 
 def model_preparation(MODEL_TYPE, device, train_dataset, test_dataset, batch_size, batch_size_test, learning_rate, epochs):
@@ -209,10 +205,10 @@ def model_preparation(MODEL_TYPE, device, train_dataset, test_dataset, batch_siz
         num_labels=2,
         output_attentions=False,
         output_hidden_states=False,
-        cache_dir=f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/{MODEL_TYPE}',
-        local_files_only=True
+        #cache_dir=f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/{MODEL_TYPE}',
+        #local_files_only=True
     )
-    model.save_pretrained(f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/{MODEL_TYPE}')
+    #model.save_pretrained(f'/vinai/quannla/bert-meets-cranfield/Code/pretrained-model/{MODEL_TYPE}')
     torch.cuda.empty_cache()
     
     # model = torch.nn.DataParallel(model, device_ids=[i for i in range(torch.cuda.device_count())])
@@ -280,12 +276,12 @@ def training(model, train_dataloader, device, optimizer, scheduler, logger, save
     return model, optimizer, scheduler
 
 
-def testing(model, test_dataloader, device, test_index, mrr_bert_list, map_bert_list, ndcg_bert_list,
-            mrr_bert, map_bert, ndcg_bert, rel_fed, fold_number, map_cut, ndcg_cut, logger):
+def testing(model, test_dataloader, device, test_index, mrr_bert_list, ap_11_interpolated_list, map_bert_list, ndcg_bert_list,
+            mrr_bert, ap_11_interpolated_bert, map_bert, ndcg_bert, rel_fed, fold_number, map_cut, ndcg_cut, logger, lenth_of_corpus):
     model.eval()
     predictions, true_labels = [], []
     walker = 0
-    for batch in test_dataloader:
+    for batch in tqdm(test_dataloader):
         batch = tuple(t.to(device) for t in batch)
         b_input_ids, b_input_mask, b_input_token, b_labels = batch
 
@@ -320,32 +316,35 @@ def testing(model, test_dataloader, device, test_index, mrr_bert_list, map_bert_
         walker += 1
 
     walker = 0
-    mrr_total, map_total, ndcg_total = 0, 0, 0
-    mrr_list, map_list, ndcg_list = [], [], []
+    mrr_total, ap_11_total, map_total, ndcg_total = 0, 0, 0, 0
+    mrr_list, ap_11_list, map_list, ndcg_list = [], [], [], []
     trec_fold = ""
     for query_index in test_index:
         current_query = "Q" + str(query_index + 1) + "\t" + "Q0" + "\t"
         doc_scores = list(zip(*predictions[walker]))[1]
-        feedback = list(zip(doc_scores, range(0, 1400)))
-        mrr_total, map_total, ndcg_total, mrr_list, map_list, ndcg_list, trec_fold = mrr_map_ndcg(trec_fold,
+        feedback = list(zip(doc_scores, range(0, lenth_of_corpus)))
+        mrr_total, ap_11_total, map_total, ndcg_total, mrr_list, ap_11_list, map_list, ndcg_list, trec_fold = mrr_ap_11_map_ndcg(trec_fold,
                                                                                                   current_query,
                                                                                                   query_index, feedback,
-                                                                                                  rel_fed, mrr_total,
+                                                                                                  rel_fed, mrr_total, ap_11_total,
                                                                                                   map_total, ndcg_total,
-                                                                                                  mrr_list, map_list,
+                                                                                                  mrr_list, ap_11_list, map_list,
                                                                                                   ndcg_list, 'BERT',
                                                                                                   fold_number, map_cut,
                                                                                                   ndcg_cut)
         walker += 1
 
     mrr_bert_list += list(zip(mrr_list, test_index))
+    ap_11_interpolated_list += list(zip(ap_11_list, test_index))
     map_bert_list += list(zip(map_list, test_index))
     ndcg_bert_list += list(zip(ndcg_list, test_index))
 
     mrr_bert += mrr_total / len(test_index)
+    ap_11_interpolated_bert += ap_11_total / len(test_index)
     map_bert += map_total / len(test_index)
     ndcg_bert += ndcg_total / len(test_index)
     logger.info("Test MRR:  " + "{:.4f}".format(mrr_total / len(test_index)))
+    logger.info("Test 11-points interpolated precision:  " + "{:.4f}".format(ap_11_total / len(test_index)))
     logger.info("Test MAP:  " + "{:.4f}".format(map_total / len(test_index)))
     logger.info("Test NDCG: " + "{:.4f}".format(ndcg_total / len(test_index)))
     logger.info(len(map_bert_list))

@@ -11,8 +11,8 @@ output_model/
 log_folder/
 tokenizer_value.pkl
 tokenizer_value_256.pkl 
-Code/__pycache__
-Code/log_folder/
-Code/results/
-Code/results_256/
+src/__pycache__
+src/log_folder/
+src/results/
+src/results_256/
 outputs_folder/
