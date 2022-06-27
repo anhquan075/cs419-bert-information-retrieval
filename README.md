@@ -1,5 +1,8 @@
 # Information Retrieval using BERT-rankers 
 We investigate BERT-based rankers performance on the Cranfield collection, which comes with full relevance judgment on all documents in the collection. The codebase based on [Bert-meets-Cranfiled](https://gitlab.science.ru.nl/nghasemi/bert-meets-cranfield) repo.
+
+You can run this colab version in [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1PNVCaH21SeY8ntjS0GxUHXMW4cw-PzHs?usp=sharing]
+
 # Requirements
 Make sure to install all the neccessary packages using the following command:
 ```bash
@@ -99,5 +102,6 @@ cd ..
 Run the command to infer with the model.
 
 ```bash
+cd src/
 bash infer.sh
 ```
