@@ -73,7 +73,7 @@ def interpolated_11_point(retrieved, golds):
         rhoInterp.append(pmax)
         
     ap = sum(rhoInterp) / 11        
-    return ap, rhoInterp
+    return ap, 
 
 
 def dcg(retrieved, k):
