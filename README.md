@@ -78,6 +78,7 @@ You can set Hyper-parameters in the `init_args` function of `ranker.py` file.
 ## Training
 To train the model from stratch, you can use the script `train.sh` in `./src/` folder, you also can change some parameters to define your output or the hyperparamaters as your wish.:
 ```bash
+cd src/
 bash train.sh
 ```
 ## Inference
@@ -85,6 +86,7 @@ To run the inference, make sure you prepare the data like [this](#data-preparati
 
 If you've trained your model, link the model path in `infer.sh` or you can use ours in [here](https://drive.google.com/file/d/1wZpZiwvuC93tjDvBTYOsApnPZl1Kkkzc/view?usp=sharing):
 ```bash
+cd src/
 mkdir outputs_model
 cd outputs_model
 gdown --id 1wZpZiwvuC93tjDvBTYOsApnPZl1Kkkzc
