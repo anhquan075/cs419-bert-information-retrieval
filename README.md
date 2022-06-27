@@ -76,9 +76,8 @@ You can set Hyper-parameters in the `init_args` function of `ranker.py` file.
 - EPOCHS: Indicates the epoch numbers for fine-tuning. We tested 2, 3, 4 number of epochs as suggested by [BERT](https://www.aclweb.org/anthology/N19-1423/) paper.
 
 ## Training
-To train the model from stratch, you can use the script `train.sh` in `./src/script` folder, you also can change some parameters to define your output or the hyperparamaters as your wish.:
+To train the model from stratch, you can use the script `train.sh` in `./src/` folder, you also can change some parameters to define your output or the hyperparamaters as your wish.:
 ```bash
-cd script/
 bash train.sh
 ```
 ## Inference
@@ -94,6 +93,5 @@ cd ..
 Run the command to infer with the model.
 
 ```bash
-cd script/
 bash infer.sh
 ```

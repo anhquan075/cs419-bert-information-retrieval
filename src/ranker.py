@@ -14,7 +14,7 @@ import torch
 # For debugging
 os.environ["CUDA_VISIBLE_DEVICES"]="7"
 
-os.makedirs("../log_folder", exist_ok=True)
+os.makedirs("log_folder", exist_ok=True)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
@@ -40,7 +40,7 @@ def init_args():
     parser.add_argument('--seed', type=int, default=76)
     parser.add_argument('--mode', type=str, default='test')
     parser.add_argument('--mode_pickle', type=str, default='rb')
-    parser.add_argument('--model_type', type=str, default='/vinai/quannla/bert-meets-cranfield/code/pretrained-model/amberoad/bert-multilingual-passage-reranking-msmarco')
+    parser.add_argument('--model_type', type=str, default='amberoad/bert-multilingual-passage-reranking-msmarco')
     parser.add_argument('--learning_rate', type=float, default=3e-5)
     parser.add_argument('--max_length', type=int, default=256)
     parser.add_argument('--batch_size', type=int, default=64)
@@ -49,14 +49,15 @@ def init_args():
     parser.add_argument('--top_bm25', type=int, default=100)
     parser.add_argument('--map_cut', type=int, default=100)
     parser.add_argument('--ndcg_cut', type=int, default=100)
-    
     parser.add_argument('--test_batch_size', type=int, default=1400)
-    parser.add_argument('--output_model_path', type=str, default='output_model/{}'.format(datetime_res))
-    parser.add_argument('--pretrained_model_path', type=str, default='/vinai/quannla/bert-meets-cranfield/code/output_model/16_18_25_06_2022/model_epoch_2_step_100_loss_0.014_acc_97.31.pth')
     
-    parser.add_argument('--corpus_file', type=str, default='/vinai/quannla/bert-meets-cranfield/data/cran/cran_corpus.json')
-    parser.add_argument('--query_file', type=str, default='/vinai/quannla/bert-meets-cranfield/data/cran/cran_qry.json')
-    parser.add_argument('--evaluation_file', type=str, default='/vinai/quannla/bert-meets-cranfield/data/cran/cranqrel')
+    parser.add_argument('--fold_folder', type=str, default='../data/folds/')
+    parser.add_argument('--output_model_path', type=str, default='output_model/{}'.format(datetime_res))
+    parser.add_argument('--pretrained_model_path', type=str, default='./output_model/16_18_25_06_2022/model_epoch_2_step_100_loss_0.014_acc_97.31.pth')
+    
+    parser.add_argument('--corpus_file', type=str, default='../data/cran/cran_corpus.json')
+    parser.add_argument('--query_file', type=str, default='../data/cran/cran_qry.json')
+    parser.add_argument('--evaluation_file', type=str, default='../data/cran/cranqrel')
     
     
     args = parser.parse_args()
@@ -92,13 +93,13 @@ if __name__ == "__main__":
     bm25, bm25_top_n = utils.get_bm25_top_results(tokenized_corpus, tokenized_queries, args.top_bm25)
 
     if args.mode_pickle == 'wb':
-        with open("/vinai/quannla/bert-meets-cranfield/tokenizer_value_{}.pkl".format(args.max_length), args.mode_pickle) as fo:
+        with open("../tokenizer_value_{}.pkl".format(args.max_length), args.mode_pickle) as fo:
             padded_all, attention_mask_all, token_type_ids_all, temp_feedback = utils.bert_tokenizer(corpus,
                                                                                                     queries,
                                                                                                     args.max_length, args.model_type)
             pickle.dump((padded_all, attention_mask_all, token_type_ids_all, temp_feedback), fo)
     elif args.mode_pickle == 'rb':
-        with open("/vinai/quannla/bert-meets-cranfield/tokenizer_value_{}.pkl".format(args.max_length), args.mode_pickle) as fo:
+        with open("../tokenizer_value_{}.pkl".format(args.max_length), args.mode_pickle) as fo:
             padded_all, attention_mask_all, token_type_ids_all, temp_feedback = pickle.load(fo)
             logger.info('Load tokenizer successfully.')
     else:
@@ -112,7 +113,7 @@ if __name__ == "__main__":
 
     for fold_number in range(1, 6):
         logger.info('======== Fold {:} / {:} ========'.format(fold_number, 5))
-        train_index, test_index = data_utils.load_fold(fold_number)
+        train_index, test_index = data_utils.load_fold(args.fold_folder, fold_number)
 
         padded, attention_mask, token_type_ids = [], [], []
 

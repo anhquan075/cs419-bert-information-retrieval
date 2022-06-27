@@ -25,9 +25,9 @@ def get_judgments(location):
         return [list(map(int, rf)) for rf in rel_fed if '' not in rf]
 
 
-def load_fold(fold_number):
-    train_index = np.load('/vinai/quannla/bert-meets-cranfield/data/folds/train_index_fold' + str(fold_number) + '.npy')
-    test_index = np.load('/vinai/quannla/bert-meets-cranfield/data/folds/test_index_fold' + str(fold_number) + '.npy')
+def load_fold(fold_folder, fold_number):
+    train_index = np.load(f'{fold_folder}/train_index_fold' + str(fold_number) + '.npy')
+    test_index = np.load(f'{fold_folder}/test_index_fold' + str(fold_number) + '.npy')
     return train_index, test_index
 
 
