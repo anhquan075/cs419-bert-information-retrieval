@@ -1,5 +1,6 @@
 # Information Retrieval using BERT-rankers 
 Our final project in CS419 course - Information Retrieval at UIT-VNUHCM. 
+
 Author: 
 - Nguyen Le Anh Quan - 19522081
 - Duong Dinh Thang - 19522195
