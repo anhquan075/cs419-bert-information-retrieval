@@ -3,6 +3,7 @@ Our final project in CS419 course - Information Retrieval at UIT-VNUHCM.
 Author: 
 - Nguyen Le Anh Quan - 19522081
 - Duong Dinh Thang - 19522195
+
 In this project, we investigate BERT-based rankers performance on the Cranfield collection, which comes with full relevance judgment on all documents in the collection. The codebase based on [Bert-meets-Cranfiled](https://gitlab.science.ru.nl/nghasemi/bert-meets-cranfield) repo.
 
 You can run this colab version in [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1PNVCaH21SeY8ntjS0GxUHXMW4cw-PzHs?usp=sharing]
