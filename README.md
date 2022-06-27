@@ -33,7 +33,7 @@ You can also find the folds we used in this folder under `./data/folds`.
 # Data Preparation
 Cranfield collection was downloaded from [here](http://ir.dcs.gla.ac.uk/resources/test_collections/cran/).
 
-We converted the data into `json` format. You can find the sample for the queries file and the corpus file.
+We converted the data into `json` format. You have to convert the data like our format. You can find the sample for the queries file and the corpus file.
 - The queries file
 ```json
 [
